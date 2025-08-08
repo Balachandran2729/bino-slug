@@ -1,4 +1,4 @@
-// app/[slug]/page.jsx
+export const dynamic = "force-dynamic";
 import fs from "fs";
 import path from "path";
 import TextSection from "@/components/TextSection";
