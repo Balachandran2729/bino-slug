@@ -1,34 +1,48 @@
-
 import fs from "fs";
 import path from "path";
 
-function getFilePath() {
-  if (process.env.VERCEL) {
-    return path.join("/tmp", "pages.json");
-  }
-  return path.join(process.cwd(), "data", "pages.json");
-}
+const tmpFilePath = "/tmp/pages.json";
+const defaultFilePath = path.join(process.cwd(), "data", "pages.json");
 export async function GET() {
-  const filePath = getFilePath();
+  try {
+    let data;
+    if (fs.existsSync(tmpFilePath)) {
+      data = JSON.parse(fs.readFileSync(tmpFilePath, "utf-8"));
+    } else {
+      data = JSON.parse(fs.readFileSync(defaultFilePath, "utf-8"));
+    }
 
-  if (fs.existsSync(filePath)) {
-    const data = fs.readFileSync(filePath, "utf-8");
-    return new Response(data, { status: 200 });
+    return new Response(JSON.stringify(data), {
+      status: 200,
+      headers: { "Content-Type": "application/json" },
+    });
+  } catch (error) {
+    return new Response(JSON.stringify({ error: error.message }), {
+      status: 500,
+      headers: { "Content-Type": "application/json" },
+    });
   }
-  return new Response(JSON.stringify([]), { status: 200 });
 }
 export async function POST(req) {
-  const filePath = getFilePath();
-  let pages = [];
-  if (fs.existsSync(filePath)) {
-    const fileData = fs.readFileSync(filePath, "utf-8");
-    pages = JSON.parse(fileData);
+  try {
+    const body = await req.json();
+    let pages = [];
+    if (fs.existsSync(tmpFilePath)) {
+      pages = JSON.parse(fs.readFileSync(tmpFilePath, "utf-8"));
+    } else {
+      pages = JSON.parse(fs.readFileSync(defaultFilePath, "utf-8"));
+    }
+    pages.push(body);
+    fs.writeFileSync(tmpFilePath, JSON.stringify(pages, null, 2));
+
+    return new Response(
+      JSON.stringify({ message: "Page created", slug: body.slug }),
+      { status: 201, headers: { "Content-Type": "application/json" } }
+    );
+  } catch (error) {
+    return new Response(JSON.stringify({ error: error.message }), {
+      status: 500,
+      headers: { "Content-Type": "application/json" },
+    });
   }
-  const body = await req.json();
-  pages.push(body);
-  fs.writeFileSync(filePath, JSON.stringify(pages, null, 2));
-  return new Response(
-    JSON.stringify({ message: "Page created", slug: body.slug }),
-    { status: 201 }
-  );
 }

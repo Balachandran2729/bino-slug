@@ -1,11 +1,9 @@
-export const dynamic = "force-dynamic";
-import fs from "fs";
-import path from "path";
 import TextSection from "@/components/TextSection";
 import Card from "@/components/Card";
 import ImageBlock from "@/components/ImageBlock";
 import CallToAction from "@/components/CallToAction";
 import NotFound from "@/components/NotFound";
+import { getPages } from "@/lib/pageStore";
 
 const componentsMap = {
   TextSection,
@@ -14,40 +12,24 @@ const componentsMap = {
   Card,
 };
 
-function getFilePath() {
-  if (process.env.VERCEL) {
-    return path.join("/tmp", "pages.json");
-  }
-  return path.join(process.cwd(), "data", "pages.json");
-}
-
 export default async function DynamicPage({ params }) {
-  const { slug } = params;
-
-  let pagesData = [];
-  const filePath = getFilePath();
-
-  if (fs.existsSync(filePath)) {
-    const jsonData = fs.readFileSync(filePath, "utf-8");
-    pagesData = JSON.parse(jsonData);
-  }
-
-  const page = pagesData.find((p) => p.slug === slug);
+  const { slug } = await params;
+  const page = getPages().find((p) => p.slug === slug);
 
   if (!page) {
     return <NotFound />;
   }
-
-  const textSectionBlock = page.components.find((c) => c.type === "TextSection");
-  const cardBlock = page.components.find((c) => c.type === "Card");
-  const imageBlock = page.components.find((c) => c.type === "ImageBlock");
-  const ctaBlock = page.components.find((c) => c.type === "CallToAction");
 
   const getComp = (block) => {
     if (!block) return null;
     const Comp = componentsMap[block.type];
     return Comp ? <Comp {...block.props} /> : null;
   };
+
+  const textSectionBlock = page.components.find((c) => c.type === "TextSection");
+  const cardBlock = page.components.find((c) => c.type === "Card");
+  const imageBlock = page.components.find((c) => c.type === "ImageBlock");
+  const ctaBlock = page.components.find((c) => c.type === "CallToAction");
 
   return (
     <div className=" bg-gray-50 flex items-center justify-center p-4">
@@ -57,7 +39,6 @@ export default async function DynamicPage({ params }) {
             {getComp(textSectionBlock)}
           </div>
         )}
-
         <div className="p-8 grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
           {imageBlock && (
             <div className="w-full">
@@ -73,3 +54,5 @@ export default async function DynamicPage({ params }) {
     </div>
   );
 }
+
+export const dynamic = "force-dynamic";
