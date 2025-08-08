@@ -11,7 +11,7 @@ export default function NotFound() {
           <Lottie animationData={NotFoung} loop={true} style={{ width: 300, height: 300 }} />
         </div>
         <p className="text-lg text-gray-600 font-mono mb-8">
-          The page you're looking for doesn't exist or hasn't been created yet.
+          {"The page you're looking for doesn't exist or hasn't been created yet."}
         </p>
         <Link 
           href="/"
