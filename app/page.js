@@ -6,7 +6,7 @@ export default function Home() {
       <div className="flex flex-row   p-4 mt-2 rounded-lg text-sm space-y-1">
         <div className="w-1/2 flex flex-col justify-center items-start text-[17px]">
           <h3 className="font-semibold">Method : <span className="text-blue-600">POST</span></h3>
-          <h3 className="font-semibold">URL : <span className="text-blue-600">https://your-app.vercel.app/api/pages</span></h3>
+          <h3 className="font-semibold">URL : <span className="text-blue-600">https://bino-slug.vercel.app/api/pages</span></h3>
           <h3 className="font-semibold">Headers : <span className="text-blue-600">Content-Type: application/json</span></h3>
         </div>
         {/* Right side content */}
