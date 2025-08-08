@@ -1,33 +1,34 @@
-import { promises as fs } from "fs";
+
+import fs from "fs";
 import path from "path";
 
-export async function POST(request) {
-  const body = await request.json();
-  const filePath = path.join(process.cwd(), "data", "pages.json");
+function getFilePath() {
+  if (process.env.VERCEL) {
+    return path.join("/tmp", "pages.json");
+  }
+  return path.join(process.cwd(), "data", "pages.json");
+}
+export async function GET() {
+  const filePath = getFilePath();
+
+  if (fs.existsSync(filePath)) {
+    const data = fs.readFileSync(filePath, "utf-8");
+    return new Response(data, { status: 200 });
+  }
+  return new Response(JSON.stringify([]), { status: 200 });
+}
+export async function POST(req) {
+  const filePath = getFilePath();
   let pages = [];
-  try {
-    const data = await fs.readFile(filePath, "utf-8");
-    pages = JSON.parse(data);
-  } catch (error) {
-    pages = [];
+  if (fs.existsSync(filePath)) {
+    const fileData = fs.readFileSync(filePath, "utf-8");
+    pages = JSON.parse(fileData);
   }
-  const slugExists = pages.some((page) => page.slug === body.slug);
-  if (slugExists) {
-    return new Response(
-      JSON.stringify({ message: "Slug name already exists" }), 
-      {
-        status: 409,
-        headers: { "Content-Type": "application/json" },
-      }
-    );
-  }
+  const body = await req.json();
   pages.push(body);
-  await fs.writeFile(filePath, JSON.stringify(pages, null, 2));
+  fs.writeFileSync(filePath, JSON.stringify(pages, null, 2));
   return new Response(
-    JSON.stringify({ message: "Page created", slug: body.slug }), 
-    {
-      status: 201,
-      headers: { "Content-Type": "application/json" },
-    }
+    JSON.stringify({ message: "Page created", slug: body.slug }),
+    { status: 201 }
   );
 }
