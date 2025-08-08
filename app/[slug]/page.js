@@ -1,3 +1,4 @@
+// app/[slug]/page.jsx
 import fs from "fs";
 import path from "path";
 import TextSection from "@/components/TextSection";
@@ -5,26 +6,32 @@ import Card from "@/components/Card";
 import ImageBlock from "@/components/ImageBlock";
 import CallToAction from "@/components/CallToAction";
 import NotFound from "@/components/NotFound";
+
 const componentsMap = {
   TextSection,
   ImageBlock,
   CallToAction,
   Card,
 };
-async function getPagesData() {
-  const tmpPath = path.join("/tmp", "pages.json");
-  if (fs.existsSync(tmpPath)) {
-    const jsonData = fs.readFileSync(tmpPath, "utf-8");
-    return JSON.parse(jsonData);
+
+function getFilePath() {
+  if (process.env.VERCEL) {
+    return path.join("/tmp", "pages.json");
   }
-  const dataPath = path.join(process.cwd(), "data", "pages.json");
-  const jsonData = fs.readFileSync(dataPath, "utf-8");
-  return JSON.parse(jsonData);
+  return path.join(process.cwd(), "data", "pages.json");
 }
 
 export default async function DynamicPage({ params }) {
-  const { slug } = await params;
-  const pagesData = await getPagesData();
+  const { slug } = params;
+
+  let pagesData = [];
+  const filePath = getFilePath();
+
+  if (fs.existsSync(filePath)) {
+    const jsonData = fs.readFileSync(filePath, "utf-8");
+    pagesData = JSON.parse(jsonData);
+  }
+
   const page = pagesData.find((p) => p.slug === slug);
 
   if (!page) {
@@ -43,9 +50,8 @@ export default async function DynamicPage({ params }) {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
+    <div className=" bg-gray-50 flex items-center justify-center p-4">
       <div className="max-w-4xl w-full mx-auto bg-white rounded-2xl shadow-lg overflow-hidden">
-        
         {textSectionBlock && (
           <div className="p-8 border-b border-gray-200">
             {getComp(textSectionBlock)}
@@ -58,26 +64,9 @@ export default async function DynamicPage({ params }) {
               <ImageBlock {...imageBlock.props} />
             </div>
           )}
-
           <div className="flex flex-col gap-6 justify-center">
             {cardBlock && <Card {...cardBlock.props} />}
-            {ctaBlock && (
-              <div className="mt-4 text-center">
-                {getComp(ctaBlock)}
-              </div>
-            )}
-          </div>
-        </div>
-
-        <div className="p-8 border-t border-gray-200">
-          <div className="mt-6 space-y-4">
-            {page.components
-              .filter((b) => !["Card", "ImageBlock", "CallToAction", "TextSection"].includes(b.type))
-              .map((b, idx) => {
-                const Comp = componentsMap[b.type];
-                if (!Comp) return null;
-                return <Comp key={idx} {...b.props} />;
-              })}
+            {ctaBlock && <div className="mt-4 text-center">{getComp(ctaBlock)}</div>}
           </div>
         </div>
       </div>
