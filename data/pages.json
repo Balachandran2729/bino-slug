@@ -1,1 +1,34 @@
-[]
+[
+  {
+    "slug": "event-invite",
+    "components": [
+      {
+        "type": "TextSection",
+        "props": {
+          "text": "📅 You're Invited! Join us for our Annual Tech Conference 2025."
+        }
+      },
+      {
+        "type": "ImageBlock",
+        "props": {
+          "src": "https://images.unsplash.com/photo-1503428593586-e225b39bddfe",
+          "alt": ""
+        }
+      },
+      {
+        "type": "Card",
+        "props": {
+          "title": "Event Details",
+          "text": "Date: 12th October 2025\nLocation: Grand Convention Center, New York\nDon't miss this chance to connect with industry leaders!"
+        }
+      },
+      {
+        "type": "CallToAction",
+        "props": {
+          "text": "Register Now",
+          "href": "https://bino.bot"
+        }
+      }
+    ]
+  }
+]
