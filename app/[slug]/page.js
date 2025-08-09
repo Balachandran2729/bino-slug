@@ -13,8 +13,9 @@ const componentsMap = {
 };
 
 export default async function DynamicPage({ params }) {
-  const { slug } = await params;
-  const page = getPages().find((p) => p.slug === slug);
+  const { slug } = params;
+  const pages = await getPages(); 
+  const page = pages.find((p) => p.slug === slug);
 
   if (!page) {
     return <NotFound />;
@@ -32,7 +33,7 @@ export default async function DynamicPage({ params }) {
   const ctaBlock = page.components.find((c) => c.type === "CallToAction");
 
   return (
-    <div className=" bg-gray-50 flex items-center justify-center p-4">
+    <div className="bg-gray-50 flex items-center justify-center p-4">
       <div className="max-w-4xl w-full mx-auto bg-white rounded-2xl shadow-lg overflow-hidden">
         {textSectionBlock && (
           <div className="p-8 border-b border-gray-200">

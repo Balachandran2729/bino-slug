@@ -1,5 +1,4 @@
 "use client"
-
 import Link from "next/link";
 import NotFoung from "@/Animation/Error 404.json"
 import Lottie from "lottie-react";
