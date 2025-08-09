@@ -3,7 +3,7 @@ import Card from "@/components/Card";
 import ImageBlock from "@/components/ImageBlock";
 import CallToAction from "@/components/CallToAction";
 import NotFound from "@/components/NotFound";
-import { getPages } from "@/lib/pageStore";
+import { getPageBySlug } from "@/lib/pageStore";
 
 const componentsMap = {
   TextSection,
@@ -14,8 +14,7 @@ const componentsMap = {
 
 export default async function DynamicPage({ params }) {
   const { slug } = params;
-  const pages = await getPages(); 
-  const page = pages.find((p) => p.slug === slug);
+  const page = await getPageBySlug(slug);
 
   if (!page) {
     return <NotFound />;
