@@ -9,19 +9,18 @@ export async function POST(req) {
     };
 
     await addPage(newPage);
+
     return Response.json(
-      { message: "Page created and stored in Firestore", id: newPage.id },
+      { message: "Page created successfully", id: newPage.id },
       { status: 201 }
     );
+
   } catch (error) {
-    console.error('Error creating page:', error);
+    console.error("Error creating page:", error);
+    const statusCode = error.message.includes("already exists") ? 400 : 500;
     return Response.json(
-      {
-        error: "Failed to create page",
-        details: error.message,
-        stack: process.env.NODE_ENV === 'development' ? error.stack : undefined
-      },
-      { status: 500 }
+      { error: error.message },
+      { status: statusCode }
     );
   }
 }
