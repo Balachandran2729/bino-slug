@@ -2,14 +2,16 @@ import TextType from "@/components/TextType";
 export default function Home() {
   return (
     <div className="p-8 text-gray-700">
-      <h2 className="font-bold text-lg">API Request Example</h2>
-      <div className="flex flex-row   p-4 mt-2 rounded-lg text-sm space-y-1">
+      <h2 className="font-bold text-xl">API Request Example</h2>
+      <p className="text-[15px] mt-2">Use Postman for send Data</p>
+      <div className="flex flex-row   px-20 rounded-lg text-sm space-y-1">
+        {/* left side */}
         <div className="w-1/2 flex flex-col justify-center items-start text-[17px]">
           <h3 className="font-semibold">Method : <span className="text-blue-600">POST</span></h3>
           <h3 className="font-semibold">URL : <span className="text-blue-600">https://bino-slug.vercel.app/api/pages</span></h3>
           <h3 className="font-semibold">Headers : <span className="text-blue-600">Content-Type: application/json</span></h3>
         </div>
-        {/* Right side content */}
+        {/* right side */}
         <div className="w-1/2 text-[17px] font-bold">
           <h3 className="font-semibold">Body :
           </h3>
